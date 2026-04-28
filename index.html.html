@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Bitácora de Ventas</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+  :root {
+    --verde-oscuro: #0C2318;
+    --verde-vivo: #339F37;
+    --gris-medio: #676767;
+    --gris-claro: #E3E0E0;
+    --blanco: #FFFFFF;
+    --fondo: #F5F5F3;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--fondo);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 0 48px;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    width: 100%;
+    background: var(--verde-oscuro);
+    padding: 28px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -40px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(51,159,55,0.12);
+    pointer-events: none;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -30px; right: 30px;
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    background: rgba(51,159,55,0.08);
+    pointer-events: none;
+  }
+  .header-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--verde-vivo);
+    margin-bottom: 2px;
+  }
+  .header-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--blanco);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+  .header-sub {
+    font-size: 13px;
+    color: rgba(255,255,255,0.45);
+    margin-top: 2px;
+    font-weight: 300;
+  }
+
+  /* ── DATE BADGE ── */
+  .date-bar {
+    width: 100%;
+    max-width: 480px;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .date-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--gris-medio);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .date-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--verde-vivo);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  /* ── CARDS ── */
+  .cards {
+    width: 100%;
+    max-width: 480px;
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .card {
+    background: var(--blanco);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    text-decoration: none;
+    border: 1.5px solid transparent;
+    transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 1px 3px rgba(12,35,24,0.06);
+    position: relative;
+    overflow: hidden;
+  }
+  .card:active {
+    transform: scale(0.985);
+    box-shadow: 0 0 0 rgba(12,35,24,0);
+  }
+  .card:hover {
+    border-color: var(--verde-vivo);
+    box-shadow: 0 4px 16px rgba(51,159,55,0.12);
+  }
+
+  /* accent line left */
+  .card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 16px; bottom: 16px;
+    width: 3px;
+    border-radius: 0 3px 3px 0;
+    background: var(--verde-vivo);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .card:hover::before { opacity: 1; }
+
+  .card-icon {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 20px;
+  }
+  .icon-day   { background: #E8F5E9; }
+  .icon-visit { background: #E3F2FD; }
+  .icon-prod  { background: #F3E5F5; }
+
+  .card-body { flex: 1; min-width: 0; }
+  .card-step {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gris-medio);
+    margin-bottom: 3px;
+  }
+  .card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--verde-oscuro);
+    letter-spacing: -0.01em;
+    margin-bottom: 3px;
+  }
+  .card-desc {
+    font-size: 12px;
+    color: var(--gris-medio);
+    line-height: 1.4;
+    font-weight: 300;
+  }
+  .card-arrow {
+    color: var(--gris-claro);
+    font-size: 18px;
+    flex-shrink: 0;
+    transition: color 0.2s, transform 0.2s;
+  }
+  .card:hover .card-arrow {
+    color: var(--verde-vivo);
+    transform: translateX(3px);
+  }
+
+  /* ── BADGE ── */
+  .card-badge {
+    position: absolute;
+    top: 14px; right: 14px;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 20px;
+    background: var(--verde-vivo);
+    color: var(--blanco);
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    width: 100%;
+    max-width: 480px;
+    padding: 4px 24px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .divider-line { flex: 1; height: 1px; background: var(--gris-claro); }
+  .divider-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--gris-claro);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    width: 100%;
+    max-width: 480px;
+    padding: 20px 24px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .footer-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--verde-vivo);
+    opacity: 0.4;
+  }
+  .footer-text {
+    font-size: 11px;
+    color: var(--gris-medio);
+    font-weight: 300;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-label">Distribuidora · Equipo Médico y Quirúrgico</div>
+  <div class="header-title">Bitácora de Ventas</div>
+  <div class="header-sub">Selecciona el formulario que necesitas</div>
+</div>
+
+<div class="date-bar">
+  <span class="date-text" id="fecha-hoy"></span>
+  <span class="date-dot"></span>
+</div>
+
+<div class="cards">
+
+  <a class="card" href="https://airtable.com/appfDyVBW94mckDgE/shr2E4Y4BaWSnDs72" target="_blank">
+    <div class="card-icon icon-day">📋</div>
+    <div class="card-body">
+      <div class="card-step">Una vez al día</div>
+      <div class="card-title">Resumen del día</div>
+      <div class="card-desc">Inicio de jornada y cierre. Vendedor, fecha, total de visitas y situaciones del día.</div>
+    </div>
+    <div class="card-arrow">›</div>
+  </a>
+
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-text">por cada visita</div>
+    <div class="divider-line"></div>
+  </div>
+
+  <a class="card" href="https://airtable.com/appfDyVBW94mckDgE/shr0Cacl9dx24GxNj" target="_blank">
+    <span class="card-badge">Repetir</span>
+    <div class="card-icon icon-visit">🏥</div>
+    <div class="card-body">
+      <div class="card-step">Cada cliente visitado</div>
+      <div class="card-title">Registro de visita</div>
+      <div class="card-desc">Cliente, tipo, horario, resultado y seguimiento. Abrir al terminar cada visita.</div>
+    </div>
+    <div class="card-arrow">›</div>
+  </a>
+
+  <a class="card" href="https://airtable.com/appfDyVBW94mckDgE/shryabOqVqVByvtii" target="_blank">
+    <span class="card-badge">Repetir</span>
+    <div class="card-icon icon-prod">📦</div>
+    <div class="card-body">
+      <div class="card-step">Cada producto presentado</div>
+      <div class="card-title">Producto presentado</div>
+      <div class="card-desc">Marca, línea, SKU, monto cotizado y vendido. Uno por cada producto de la visita.</div>
+    </div>
+    <div class="card-arrow">›</div>
+  </a>
+
+</div>
+
+<div class="footer">
+  <div class="footer-dot"></div>
+  <div class="footer-text">Guarda esta página en tu pantalla de inicio para acceso rápido desde cualquier lugar.</div>
+</div>
+
+<script>
+  const dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const hoy = new Date();
+  document.getElementById('fecha-hoy').textContent =
+    dias[hoy.getDay()] + ' ' + hoy.getDate() + ' ' + meses[hoy.getMonth()] + ' · ' + hoy.getFullYear();
+</script>
+</body>
+</html>
